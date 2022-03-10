@@ -11,24 +11,27 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import datetime
 from pathlib import Path
-import os
+import environ
+import io, os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+# Build paths inside the project like this: ROOT_DIR / 'subdir'.
+ROOT_DIR = Path(__file__).resolve().parent.parent
+env = environ.Env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6vg_qj)1afgtp+w82qwl*g*w90x9+gipyzxeb81g$i!v+kcj#y'
+settings_name = os.environ.get("SETTINGS_NAME", "skippy_settings")
+env.read_env(io.StringIO(settings_name))
+SECRET_KEY = os.environ.get('SECRET_KEY', "12345")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", True)
+HOST_URL= os.environ.get("HOST_URL", "*")
+ALLOWED_HOSTS = [HOST_URL]
 
-ALLOWED_HOSTS = []
-
-
+MIGRATION_MODULES = {"sites": "superiorskip.contrib.sites.migrations"}
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,7 +44,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    'skiptrace_data'
+    'skiptrace_data',
+    "storages"
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -73,7 +77,7 @@ ROOT_URLCONF = 'skiptrace.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [ROOT_DIR / 'templates']
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -92,17 +96,17 @@ WSGI_APPLICATION = 'skiptrace.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASS'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    }
-}
+DATABASES = {"default": env.db()}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.getenv('DB_NAME'),
+#         'USER': os.getenv('DB_USER'),
+#         'PASSWORD': os.getenv('DB_PASS'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
+#     }
+# }
 
 DEFAULT_RENDERER_CLASSES = (
     'rest_framework.renderers.JSONRenderer',
