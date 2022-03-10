@@ -22,7 +22,7 @@ env = environ.Env()
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-settings_name = os.environ.get("SETTINGS_NAME", "skippy_settings")
+settings_name = os.environ.get("SETTINGS_NAME", "django_settings")
 env.read_env(io.StringIO(settings_name))
 SECRET_KEY = os.environ.get('SECRET_KEY', "12345")
 
