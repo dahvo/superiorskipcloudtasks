@@ -25,7 +25,7 @@ env = environ.Env()
 settings_name = os.environ.get("SETTINGS_NAME", "django_settings")
 env.read_env(io.StringIO(settings_name))
 SECRET_KEY = os.environ.get('SECRET_KEY', "12345")
-
+HOST_URL = "https://skippy-bdy2pvtljq-uc.a.run.app"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", True)
 HOST_URL= os.environ.get("HOST_URL", "*")
